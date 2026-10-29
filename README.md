@@ -4,8 +4,7 @@ A scrollytelling story map tracing how Sound Transit's Link Light Rail has shape
 
 **[Live demo →](https://mfarrell-gis.github.io/seattle-link-tod-analysis/)**
 
-<!-- Add a screenshot: save it as assets/preview.png and uncomment the next line -->
-<!-- ![Story map preview](assets/preview.png) -->
+![Story map showing Link stations and multifamily housing permits in central Seattle](assets/preview.jpg)
 
 ## The question
 
