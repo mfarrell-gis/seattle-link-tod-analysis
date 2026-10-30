@@ -60,7 +60,7 @@
         <div class="legend-row"><span class="legend-diamond" style="background:#4a90d9"></span>Station (2009)</div>
         <div class="legend-row"><span class="legend-diamond" style="background:#7ec8e3"></span>Station (2016)</div>
         <div class="legend-row"><span class="legend-diamond" style="background:#a3d9ff"></span>Station (2021)</div>
-        <div class="legend-row"><span class="legend-diamond" style="background:#e8b84b"></span>Station (2024–25)</div>
+        <div class="legend-row"><span class="legend-diamond" style="background:#e8b84b"></span>Station (2024–26)</div>
       </div>
       <div class="legend-divider" id="legend-housing-div" style="display:none"></div>
       <div class="legend-section" id="legend-housing" style="display:none">
@@ -157,12 +157,12 @@
 
     <!-- CHAPTER 4: East Link / 2 Line -->
     <div class="chapter" id="chapter-4" data-chapter="4">
-      <div class="chapter-year">2024</div>
+      <div class="chapter-year">2024 – 2026</div>
       <span class="chapter-tag rail">2 Line — East Link</span>
       <div class="chapter-card">
         <h2>Crossing the Lake</h2>
         <p>
-          The 2 Line (East Link) opened in April 2024, crossing Lake Washington on a pontoon bridge to serve Bellevue, Bel-Red, and Redmond — linking Seattle's urban core directly to the Eastside tech corridor for the first time.
+          The 2 Line (East Link) opened in April 2024 between South Bellevue and Redmond Technology, reached downtown Redmond in May 2025, and crossed Lake Washington on the I-90 floating bridge in March 2026 — linking Seattle's urban core directly to Bellevue and the Eastside tech corridor for the first time.
         </p>
         <p style="margin-top:0.75rem;">
           On the Seattle side, the 2 Line shares the International District/Chinatown station with the 1 Line, reinforcing one of the city's most transit-dense nodes. The Rainier Valley and Central District neighborhoods visible here have seen sustained multifamily construction pressure as both lines converge nearby.
@@ -173,7 +173,7 @@
         <div class="stat-row">
           <div class="stat"><strong>ID/Chinatown</strong>shared hub</div>
           <div class="stat"><strong>Lake Washington</strong>pontoon crossing</div>
-          <div class="stat"><strong>2024</strong>opening year</div>
+          <div class="stat"><strong>2026</strong>lake crossing opens</div>
         </div>
       </div>
     </div>
@@ -512,29 +512,23 @@
       [-122.2964,47.8161],
     ];
 
-    // ── 2 LINE: accurate alignment ────────────────────────────────
-    // Redmond → Overlake → Bel-Red → Spring District → Bellevue → Mercer Island
-    // → I-90 floating bridge → ID/Chinatown shared station → tunnel to Int'l Dist
+    // ── 2 LINE ─────────────────────────────────────────────────────
+    // Downtown Redmond → Bellevue → I-90 floating bridge → ID/Chinatown.
+    // Vertices are the station locations (Wikipedia station coordinates).
     const line2Coords = [
-      // Redmond Tech
-      [-122.0454,47.6329],
-      // Overlake Village
-      [-122.0617,47.6236],
-      // Bel-Red / 130th
-      [-122.0813,47.6175],
-      // Spring District / 120th
-      [-122.1030,47.6164],
-      // Bellevue Downtown (elevated)
-      [-122.1308,47.6157],[-122.1308,47.6000],
-      // South Bellevue (elevated over I-90)
-      [-122.1666,47.6000],[-122.1666,47.5800],
-      // Mercer Island (I-90 floating bridge)
-      [-122.1869,47.5800],[-122.2200,47.5800],[-122.2500,47.5800],
-      [-122.2750,47.5800],[-122.2900,47.5800],
-      // Connect to I-90 express lanes into downtown Seattle
-      [-122.3050,47.5800],
-      // Shared at International District / Chinatown
-      [-122.3281,47.5983],
+      [-122.120156,47.67224],   // Downtown Redmond
+      [-122.1092,47.6674],   // Marymoor Village
+      [-122.13361,47.64472],   // Redmond Technology
+      [-122.13889,47.63639],   // Overlake Village
+      [-122.16583,47.62444],   // BelRed
+      [-122.17861,47.62361],   // Spring District
+      [-122.18389,47.61806],   // Wilburton
+      [-122.19194,47.61528],   // Bellevue Downtown
+      [-122.19111,47.60806],   // East Main
+      [-122.19028,47.58639],   // South Bellevue
+      [-122.23278,47.58806],   // Mercer Island
+      [-122.30194,47.59028],   // Judkins Park
+      [-122.32806,47.59833],   // International District/Chinatown (shared with 1 Line)
     ];
 
     map.addSource('line1', {
@@ -733,8 +727,14 @@
         map.setFilter('stations-circle', ['==', ['get','year'], -1]); // hide all
         map.setFilter('stations-halo',   ['==', ['get','year'], -1]);
       } else {
-        map.setFilter('stations-circle', ['<=', ['get','year'], stationYearThreshold]);
-        map.setFilter('stations-halo',   ['<=', ['get','year'], stationYearThreshold]);
+        // 1 Line stations follow the year threshold; 2 Line stations appear
+        // together once the story reaches the lake crossing (chapter 4).
+        const f = ['any',
+          ['all', ['!=', ['get','line'], '2'], ['<=', ['get','year'], stationYearThreshold]],
+          ['all', ['==', ['get','line'], '2'], index >= 4],
+        ];
+        map.setFilter('stations-circle', f);
+        map.setFilter('stations-halo',   f);
       }
     }
 
