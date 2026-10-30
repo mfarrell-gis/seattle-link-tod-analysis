@@ -967,5 +967,20 @@
 geojsonFetch();
 
 </script>
+<script>
+  // On phones the legend starts collapsed; tap it to open or close.
+  (function () {
+    const legend = document.getElementById('map-legend');
+    if (!legend) return;
+    legend.setAttribute('role', 'button');
+    legend.setAttribute('tabindex', '0');
+    legend.setAttribute('aria-label', 'Map legend, tap to show or hide');
+    const toggle = () => legend.classList.toggle('open');
+    legend.addEventListener('click', toggle);
+    legend.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  })();
+</script>
 </body>
 </html>
