@@ -404,12 +404,25 @@
     }))
   };
 
+  // ── SCREEN-SIZE ZOOM ADJUSTMENT ──────────────────────────────────
+  // Chapter zooms were set on a desktop map pane (~800 x 900 px). On the
+  // phone/tablet layout, zoom out so the same area stays in view. Each zoom level
+  // halves the visible area, so the offset is log2 of the size ratio.
+  const REF_W = 800, REF_H = 900;
+  function zoomOffset() {
+    if (window.innerWidth > 800) return 0;   // desktop layout: unchanged
+    const el = document.getElementById('map-container');
+    const ratio = Math.min(el.clientWidth / REF_W, el.clientHeight / REF_H);
+    return Math.min(0, Math.log2(ratio));
+  }
+  const fitZoom = z => z + zoomOffset();
+
   // ── INIT MAP ─────────────────────────────────────────────────────
   const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/dark-v11',
     center: chapters[0].center,
-    zoom: chapters[0].zoom,
+    zoom: fitZoom(chapters[0].zoom),
     bearing: chapters[0].bearing,
     pitch: chapters[0].pitch,
     interactive: true,
@@ -611,7 +624,7 @@
       id: 'housing-heat',
       type: 'heatmap',
       source: 'housing',
-      maxzoom: 13,
+      maxzoom: 13 + zoomOffset(),
       paint: {
         'heatmap-weight': ['interpolate',['linear'],['get','units'], 5,0.3, 50,1, 200,2],
         'heatmap-intensity': ['interpolate',['linear'],['zoom'], 8,0.6, 13,1.5],
@@ -632,7 +645,7 @@
       id: 'housing-dots',
       type: 'circle',
       source: 'housing',
-      minzoom: 11,
+      minzoom: 11 + zoomOffset(),
       paint: {
         'circle-radius': ['interpolate',['linear'],['get','units'], 5,3, 30,7, 200,14],
         'circle-color': ['interpolate',['linear'],['get','units'], 5,'#3a7d44', 30,'#6abf69', 100,'#e8b84b', 200,'#fff'],
@@ -688,7 +701,7 @@
     const cfg = chapters[index];
     map.flyTo({
       center:  cfg.center,
-      zoom:    cfg.zoom,
+      zoom:    fitZoom(cfg.zoom),
       bearing: cfg.bearing,
       pitch:   cfg.pitch,
       duration: 1800,
